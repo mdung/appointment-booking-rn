@@ -3,14 +3,17 @@
  * Manage services (list, add, edit, deactivate)
  */
 
-import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, FlatList, TouchableOpacity } from 'react-native';
+import React, { useState, useEffect, useCallback } from 'react';
+import { View, Text, StyleSheet, FlatList, TouchableOpacity, RefreshControl, Alert } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { StackNavigationProp } from '@react-navigation/stack';
 import { ScreenContainer } from '../../components/layout/ScreenContainer';
 import { AppButton } from '../../components/ui/AppButton';
 import { AppCard } from '../../components/ui/AppCard';
 import { LoadingSpinner } from '../../components/ui/LoadingSpinner';
+import { EmptyState } from '../../components/ui/EmptyState';
+import { SkeletonLoader } from '../../components/ui/SkeletonLoader';
+import { ServiceActionsMenu } from '../../components/provider/ServiceActionsMenu';
 import { useAuth } from '../../context/AuthContext';
 import { providerApi } from '../../services/providerApi';
 import { Service } from '../../models/Service';
@@ -24,9 +27,18 @@ export const ProviderServicesScreen: React.FC = () => {
   const { user } = useAuth();
   const [services, setServices] = useState<Service[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [isRefreshing, setIsRefreshing] = useState(false);
+  const [selectedService, setSelectedService] = useState<Service | null>(null);
+  const [showActionsMenu, setShowActionsMenu] = useState(false);
 
   useEffect(() => {
     loadServices();
+  }, []);
+
+  const onRefresh = useCallback(async () => {
+    setIsRefreshing(true);
+    await loadServices();
+    setIsRefreshing(false);
   }, []);
 
   const loadServices = async () => {
@@ -51,36 +63,120 @@ export const ProviderServicesScreen: React.FC = () => {
     navigation.navigate('EditService', { serviceId });
   };
 
-  const renderService = ({ item }: { item: Service }) => (
-    <AppCard style={styles.serviceCard}>
-      <View style={styles.serviceHeader}>
-        <View style={styles.serviceInfo}>
-          <Text style={styles.serviceName}>{item.name}</Text>
-          <Text style={styles.servicePrice}>${item.price}</Text>
-        </View>
-        <View style={styles.serviceMeta}>
-          <Text style={styles.serviceDuration}>{item.durationMinutes} min</Text>
-          {!item.isActive && (
-            <Text style={styles.inactiveLabel}>Inactive</Text>
-          )}
-        </View>
-      </View>
-      {item.description && (
-        <Text style={styles.serviceDescription}>{item.description}</Text>
-      )}
-      <AppButton
-        title="Edit"
-        onPress={() => handleEditService(item.id)}
-        variant="outline"
-        size="small"
-        style={styles.editButton}
-      />
-    </AppCard>
-  );
+  const handleServiceLongPress = (service: Service) => {
+    setSelectedService(service);
+    setShowActionsMenu(true);
+  };
 
-  if (isLoading) {
-    return <LoadingSpinner fullScreen />;
-  }
+  const handleDuplicate = async () => {
+    if (!selectedService) return;
+    try {
+      const providerId = '1'; // Mock
+      const duplicateData = {
+        name: `${selectedService.name} (Copy)`,
+        category: selectedService.category,
+        description: selectedService.description,
+        durationMinutes: selectedService.durationMinutes,
+        price: selectedService.price,
+      };
+      await providerApi.createService(providerId, duplicateData);
+      await loadServices();
+      setShowActionsMenu(false);
+      Alert.alert('Success', 'Service duplicated');
+    } catch (error: any) {
+      Alert.alert('Error', error.message || 'Failed to duplicate service');
+    }
+  };
+
+  const handleDeactivate = async () => {
+    if (!selectedService) return;
+    try {
+      const providerId = '1'; // Mock
+      await providerApi.updateService(providerId, selectedService.id, {
+        isActive: false,
+      });
+      await loadServices();
+      setShowActionsMenu(false);
+      Alert.alert('Success', 'Service deactivated');
+    } catch (error: any) {
+      Alert.alert('Error', error.message || 'Failed to deactivate service');
+    }
+  };
+
+  const handleActivate = async () => {
+    if (!selectedService) return;
+    try {
+      const providerId = '1'; // Mock
+      await providerApi.updateService(providerId, selectedService.id, {
+        isActive: true,
+      });
+      await loadServices();
+      setShowActionsMenu(false);
+      Alert.alert('Success', 'Service activated');
+    } catch (error: any) {
+      Alert.alert('Error', error.message || 'Failed to activate service');
+    }
+  };
+
+  const handleDelete = async () => {
+    if (!selectedService) return;
+    Alert.alert(
+      'Delete Service',
+      'Are you sure you want to delete this service?',
+      [
+        { text: 'Cancel', style: 'cancel' },
+        {
+          text: 'Delete',
+          style: 'destructive',
+          onPress: async () => {
+            try {
+              const providerId = '1'; // Mock
+              await providerApi.deleteService(providerId, selectedService.id);
+              await loadServices();
+              setShowActionsMenu(false);
+              Alert.alert('Success', 'Service deleted');
+            } catch (error: any) {
+              Alert.alert('Error', error.message || 'Failed to delete service');
+            }
+          },
+        },
+      ]
+    );
+  };
+
+  const renderService = ({ item }: { item: Service }) => (
+    <TouchableOpacity
+      onLongPress={() => handleServiceLongPress(item)}
+      activeOpacity={0.7}
+    >
+      <AppCard style={styles.serviceCard}>
+        <View style={styles.serviceHeader}>
+          <View style={styles.serviceInfo}>
+            <Text style={styles.serviceName}>{item.name}</Text>
+            <Text style={styles.servicePrice}>${item.price}</Text>
+          </View>
+          <View style={styles.serviceMeta}>
+            <Text style={styles.serviceDuration}>{item.durationMinutes} min</Text>
+            {!item.isActive && (
+              <Text style={styles.inactiveLabel}>Inactive</Text>
+            )}
+          </View>
+        </View>
+        {item.description && (
+          <Text style={styles.serviceDescription}>{item.description}</Text>
+        )}
+        <View style={styles.serviceActions}>
+          <AppButton
+            title="Edit"
+            onPress={() => handleEditService(item.id)}
+            variant="outline"
+            size="small"
+            style={styles.editButton}
+          />
+        </View>
+      </AppCard>
+    </TouchableOpacity>
+  );
 
   return (
     <ScreenContainer>
@@ -91,14 +187,38 @@ export const ProviderServicesScreen: React.FC = () => {
           fullWidth
           style={styles.addButton}
         />
-        <FlatList
-          data={services}
-          renderItem={renderService}
-          keyExtractor={(item) => item.id}
-          contentContainerStyle={styles.list}
-          showsVerticalScrollIndicator={false}
-          refreshing={isLoading}
-          onRefresh={loadServices}
+        {isLoading ? (
+          <SkeletonLoader type="list" count={5} />
+        ) : (
+          <FlatList
+            data={services}
+            renderItem={renderService}
+            keyExtractor={(item) => item.id}
+            contentContainerStyle={styles.list}
+            showsVerticalScrollIndicator={false}
+            refreshControl={
+              <RefreshControl refreshing={isRefreshing} onRefresh={onRefresh} />
+            }
+            ListEmptyComponent={
+              <EmptyState
+                title="No Services"
+                message="Add your first service to get started"
+                icon="💇"
+                actionLabel="Add Service"
+                onAction={handleAddService}
+              />
+            }
+          />
+        )}
+
+        <ServiceActionsMenu
+          visible={showActionsMenu}
+          onClose={() => setShowActionsMenu(false)}
+          onDuplicate={handleDuplicate}
+          onDeactivate={handleDeactivate}
+          onActivate={handleActivate}
+          onDelete={handleDelete}
+          isActive={selectedService?.isActive ?? true}
         />
       </View>
     </ScreenContainer>
@@ -155,8 +275,13 @@ const styles = StyleSheet.create({
     color: theme.colors.textSecondary,
     marginBottom: theme.spacing.sm,
   },
+  serviceActions: {
+    flexDirection: 'row',
+    gap: theme.spacing.sm,
+    marginTop: theme.spacing.sm,
+  },
   editButton: {
-    alignSelf: 'flex-start',
+    flex: 1,
   },
 });
 

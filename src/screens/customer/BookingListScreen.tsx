@@ -3,14 +3,16 @@
  * Shows customer's bookings (upcoming and past)
  */
 
-import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, FlatList } from 'react-native';
+import React, { useState, useEffect, useCallback } from 'react';
+import { View, Text, StyleSheet, FlatList, RefreshControl } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { StackNavigationProp } from '@react-navigation/stack';
 import { ScreenContainer } from '../../components/layout/ScreenContainer';
 import { AppCard } from '../../components/ui/AppCard';
 import { BookingStatusTag } from '../../components/booking/BookingStatusTag';
 import { LoadingSpinner } from '../../components/ui/LoadingSpinner';
+import { EmptyState } from '../../components/ui/EmptyState';
+import { SkeletonLoader } from '../../components/ui/SkeletonLoader';
 import { bookingApi } from '../../services/bookingApi';
 import { Booking } from '../../models/Booking';
 import { formatDate, formatTime } from '../../utils/dateTime';
@@ -23,10 +25,17 @@ export const BookingListScreen: React.FC = () => {
   const navigation = useNavigation<BookingListScreenNavigationProp>();
   const [bookings, setBookings] = useState<Booking[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [isRefreshing, setIsRefreshing] = useState(false);
   const [activeTab, setActiveTab] = useState<'upcoming' | 'past'>('upcoming');
 
   useEffect(() => {
     loadBookings();
+  }, [activeTab]);
+
+  const onRefresh = useCallback(async () => {
+    setIsRefreshing(true);
+    await loadBookings();
+    setIsRefreshing(false);
   }, [activeTab]);
 
   const loadBookings = async () => {
@@ -67,10 +76,6 @@ export const BookingListScreen: React.FC = () => {
     </AppCard>
   );
 
-  if (isLoading) {
-    return <LoadingSpinner fullScreen />;
-  }
-
   return (
     <ScreenContainer>
       <View style={styles.container}>
@@ -93,12 +98,8 @@ export const BookingListScreen: React.FC = () => {
           </View>
         </View>
 
-        {bookings.length === 0 ? (
-          <View style={styles.emptyContainer}>
-            <Text style={styles.emptyText}>
-              No {activeTab} bookings found
-            </Text>
-          </View>
+        {isLoading ? (
+          <SkeletonLoader type="list" count={5} />
         ) : (
           <FlatList
             data={bookings}
@@ -106,6 +107,22 @@ export const BookingListScreen: React.FC = () => {
             keyExtractor={(item) => item.id}
             contentContainerStyle={styles.list}
             showsVerticalScrollIndicator={false}
+            refreshControl={
+              <RefreshControl refreshing={isRefreshing} onRefresh={onRefresh} />
+            }
+            ListEmptyComponent={
+              <EmptyState
+                title={activeTab === 'upcoming' ? 'No Upcoming Bookings' : 'No Past Bookings'}
+                message={
+                  activeTab === 'upcoming'
+                    ? "You don't have any upcoming appointments"
+                    : "You haven't completed any appointments yet"
+                }
+                icon={activeTab === 'upcoming' ? '📅' : '📋'}
+                actionLabel="Browse Providers"
+                onAction={() => navigation.navigate('CustomerTabs', { screen: 'CustomerHome' })}
+              />
+            }
           />
         )}
       </View>
@@ -166,15 +183,6 @@ const styles = StyleSheet.create({
   bookingDateTime: {
     fontSize: theme.typography.bodySmall,
     color: theme.colors.textTertiary,
-  },
-  emptyContainer: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  emptyText: {
-    fontSize: theme.typography.body,
-    color: theme.colors.textSecondary,
   },
 });
 

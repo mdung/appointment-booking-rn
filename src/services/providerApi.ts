@@ -243,6 +243,18 @@ export const providerApi = {
   },
 
   /**
+   * Delete service
+   */
+  deleteService: async (providerId: string, serviceId: string): Promise<void> => {
+    try {
+      await apiClient.delete(`/providers/${providerId}/services/${serviceId}`);
+    } catch (error) {
+      // Fallback for development
+      console.log('Service deleted (mock)');
+    }
+  },
+
+  /**
    * Update service
    */
   updateService: async (providerId: string, serviceId: string, data: UpdateServiceData): Promise<Service> => {

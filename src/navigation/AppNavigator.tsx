@@ -3,7 +3,7 @@
  * Decides which navigator to show based on authentication and user role
  */
 
-import React from 'react';
+import React, { useEffect } from 'react';
 import { createStackNavigator } from '@react-navigation/stack';
 import { RootStackParamList } from './types';
 import { useAuth } from '../context/AuthContext';
@@ -16,16 +16,32 @@ import { AdminNavigator } from './AdminNavigator';
 import { LoadingSpinner } from '../components/ui/LoadingSpinner';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { STORAGE_KEYS } from '../utils/constants';
+import { linking, setNavigationRef } from '../utils/navigationUtils';
+import { securityService } from '../services/securityService';
 
 const Stack = createStackNavigator<RootStackParamList>();
 
 export const AppNavigator: React.FC = () => {
-  const { isAuthenticated, isLoading, user } = useAuth();
+  const { isAuthenticated, isLoading, user, logout } = useAuth();
   const [showOnboarding, setShowOnboarding] = React.useState<boolean | null>(null);
 
   React.useEffect(() => {
     checkOnboardingStatus();
   }, []);
+
+  useEffect(() => {
+    // Set up session timeout
+    if (isAuthenticated) {
+      securityService.startSessionTimeout(() => {
+        logout();
+      });
+    }
+
+    // Cleanup on unmount
+    return () => {
+      securityService.cleanup();
+    };
+  }, [isAuthenticated, logout]);
 
   const checkOnboardingStatus = async () => {
     try {

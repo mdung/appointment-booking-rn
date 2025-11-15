@@ -5,6 +5,7 @@
 
 import React from 'react';
 import { NavigationContainer } from '@react-navigation/native';
+import { linking, setNavigationRef } from './src/utils/navigationUtils';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { StatusBar } from 'expo-status-bar';
 import Toast from 'react-native-toast-message';

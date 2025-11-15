@@ -79,12 +79,16 @@ export const EditServiceScreen: React.FC = () => {
     try {
       setIsSubmitting(true);
       const providerId = '1'; // Mock
+      // Get provider type from provider profile
+      const provider = await providerApi.getMyProviderProfile();
+      const providerType = provider?.type || 'HAIR';
+      
       const serviceData = {
         name: data.name,
         price: parseFloat(data.price),
         durationMinutes: parseInt(data.durationMinutes, 10),
         description: data.description,
-        category: 'HAIR', // TODO: Get from provider type
+        category: providerType,
       };
 
       if (serviceId) {

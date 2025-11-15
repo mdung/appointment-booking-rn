@@ -1,0 +1,100 @@
+{
+  "common": {
+    "loading": "Loading...",
+    "error": "Error",
+    "success": "Success",
+    "cancel": "Cancel",
+    "save": "Save",
+    "delete": "Delete",
+    "edit": "Edit",
+    "confirm": "Confirm",
+    "back": "Back",
+    "next": "Next",
+    "skip": "Skip",
+    "search": "Search",
+    "filter": "Filter",
+    "sort": "Sort",
+    "close": "Close"
+  },
+  "auth": {
+    "login": "Login",
+    "register": "Register",
+    "logout": "Logout",
+    "email": "Email",
+    "password": "Password",
+    "name": "Name",
+    "phone": "Phone",
+    "forgotPassword": "Forgot Password?",
+    "loginSuccess": "Login successful",
+    "logoutSuccess": "Logged out successfully",
+    "invalidCredentials": "Invalid email or password"
+  },
+  "booking": {
+    "bookAppointment": "Book Appointment",
+    "selectService": "Select Service",
+    "selectDate": "Select Date",
+    "selectTime": "Select Time",
+    "confirmBooking": "Confirm Booking",
+    "bookingConfirmed": "Booking confirmed!",
+    "cancelBooking": "Cancel Booking",
+    "reschedule": "Reschedule",
+    "rebook": "Rebook",
+    "upcoming": "Upcoming",
+    "past": "Past",
+    "notes": "Notes",
+    "specialRequests": "Special Requests"
+  },
+  "provider": {
+    "dashboard": "Dashboard",
+    "services": "Services",
+    "availability": "Availability",
+    "bookings": "Bookings",
+    "profile": "Profile",
+    "addService": "Add Service",
+    "editService": "Edit Service",
+    "manageAvailability": "Manage Availability",
+    "todayAppointments": "Today's Appointments",
+    "thisWeek": "This Week",
+    "thisMonth": "This Month",
+    "revenue": "Revenue"
+  },
+  "customer": {
+    "home": "Home",
+    "myBookings": "My Bookings",
+    "profile": "Profile",
+    "categories": "Categories",
+    "featuredProviders": "Featured Providers",
+    "writeReview": "Write Review",
+    "submitReview": "Submit Review"
+  },
+  "settings": {
+    "settings": "Settings",
+    "notifications": "Notifications",
+    "language": "Language",
+    "theme": "Theme",
+    "darkMode": "Dark Mode",
+    "account": "Account",
+    "deleteAccount": "Delete Account",
+    "changePassword": "Change Password"
+  },
+  "errors": {
+    "networkError": "Network error. Please check your connection.",
+    "serverError": "Server error. Please try again later.",
+    "unauthorized": "Unauthorized. Please login again.",
+    "notFound": "Resource not found.",
+    "validationError": "Please check your input.",
+    "offline": "You are offline. Some features may not work."
+  },
+  "onboarding": {
+    "welcome": "Welcome to Appointment Booking",
+    "welcomeDescription": "Book appointments with hair salons, spas, and tutors easily.",
+    "browse": "Browse & Search",
+    "browseDescription": "Find the perfect service provider by category, location, or rating.",
+    "easyBooking": "Easy Booking",
+    "easyBookingDescription": "Select service, date, and time in just a few taps.",
+    "manage": "Manage Everything",
+    "manageDescription": "Track your bookings, leave reviews, and manage your profile.",
+    "getStarted": "Get Started"
+  }
+}
+

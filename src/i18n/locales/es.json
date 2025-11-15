@@ -1,0 +1,100 @@
+{
+  "common": {
+    "loading": "Cargando...",
+    "error": "Error",
+    "success": "Éxito",
+    "cancel": "Cancelar",
+    "save": "Guardar",
+    "delete": "Eliminar",
+    "edit": "Editar",
+    "confirm": "Confirmar",
+    "back": "Atrás",
+    "next": "Siguiente",
+    "skip": "Omitir",
+    "search": "Buscar",
+    "filter": "Filtrar",
+    "sort": "Ordenar",
+    "close": "Cerrar"
+  },
+  "auth": {
+    "login": "Iniciar sesión",
+    "register": "Registrarse",
+    "logout": "Cerrar sesión",
+    "email": "Correo electrónico",
+    "password": "Contraseña",
+    "name": "Nombre",
+    "phone": "Teléfono",
+    "forgotPassword": "¿Olvidaste tu contraseña?",
+    "loginSuccess": "Inicio de sesión exitoso",
+    "logoutSuccess": "Sesión cerrada exitosamente",
+    "invalidCredentials": "Correo o contraseña inválidos"
+  },
+  "booking": {
+    "bookAppointment": "Reservar Cita",
+    "selectService": "Seleccionar Servicio",
+    "selectDate": "Seleccionar Fecha",
+    "selectTime": "Seleccionar Hora",
+    "confirmBooking": "Confirmar Reserva",
+    "bookingConfirmed": "¡Reserva confirmada!",
+    "cancelBooking": "Cancelar Reserva",
+    "reschedule": "Reprogramar",
+    "rebook": "Volver a Reservar",
+    "upcoming": "Próximas",
+    "past": "Pasadas",
+    "notes": "Notas",
+    "specialRequests": "Solicitudes Especiales"
+  },
+  "provider": {
+    "dashboard": "Panel",
+    "services": "Servicios",
+    "availability": "Disponibilidad",
+    "bookings": "Reservas",
+    "profile": "Perfil",
+    "addService": "Agregar Servicio",
+    "editService": "Editar Servicio",
+    "manageAvailability": "Gestionar Disponibilidad",
+    "todayAppointments": "Citas de Hoy",
+    "thisWeek": "Esta Semana",
+    "thisMonth": "Este Mes",
+    "revenue": "Ingresos"
+  },
+  "customer": {
+    "home": "Inicio",
+    "myBookings": "Mis Reservas",
+    "profile": "Perfil",
+    "categories": "Categorías",
+    "featuredProviders": "Proveedores Destacados",
+    "writeReview": "Escribir Reseña",
+    "submitReview": "Enviar Reseña"
+  },
+  "settings": {
+    "settings": "Configuración",
+    "notifications": "Notificaciones",
+    "language": "Idioma",
+    "theme": "Tema",
+    "darkMode": "Modo Oscuro",
+    "account": "Cuenta",
+    "deleteAccount": "Eliminar Cuenta",
+    "changePassword": "Cambiar Contraseña"
+  },
+  "errors": {
+    "networkError": "Error de red. Por favor verifica tu conexión.",
+    "serverError": "Error del servidor. Por favor intenta más tarde.",
+    "unauthorized": "No autorizado. Por favor inicia sesión nuevamente.",
+    "notFound": "Recurso no encontrado.",
+    "validationError": "Por favor verifica tu entrada.",
+    "offline": "Estás sin conexión. Algunas funciones pueden no funcionar."
+  },
+  "onboarding": {
+    "welcome": "Bienvenido a Reserva de Citas",
+    "welcomeDescription": "Reserva citas con salones de belleza, spas y tutores fácilmente.",
+    "browse": "Navegar y Buscar",
+    "browseDescription": "Encuentra el proveedor de servicios perfecto por categoría, ubicación o calificación.",
+    "easyBooking": "Reserva Fácil",
+    "easyBookingDescription": "Selecciona servicio, fecha y hora con solo unos toques.",
+    "manage": "Gestiona Todo",
+    "manageDescription": "Rastrea tus reservas, deja reseñas y gestiona tu perfil.",
+    "getStarted": "Comenzar"
+  }
+}
+

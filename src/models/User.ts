@@ -11,6 +11,7 @@ export interface User {
   role: UserRole;
   avatarUrl?: string;
   phone?: string;
+  isActive: boolean;
   createdAt: string;
   updatedAt: string;
 }

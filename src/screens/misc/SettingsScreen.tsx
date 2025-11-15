@@ -11,15 +11,36 @@ import { AppButton } from '../../components/ui/AppButton';
 import { AppCard } from '../../components/ui/AppCard';
 import { useAuth } from '../../context/AuthContext';
 import { theme } from '../../config/theme';
+import { changeLanguage, getCurrentLanguage, getAvailableLanguages } from '../../i18n';
+import { useTranslation } from 'react-i18next';
+import { securityService } from '../../services/securityService';
+import { useState, useEffect } from 'react';
 
 export const SettingsScreen: React.FC = () => {
   const navigation = useNavigation();
+  const { t } = useTranslation();
   const { logout, user } = useAuth();
   const [notificationsEnabled, setNotificationsEnabled] = useState(true);
   const [emailNotifications, setEmailNotifications] = useState(true);
   const [pushNotifications, setPushNotifications] = useState(true);
-  const [language, setLanguage] = useState('en');
+  const [language, setLanguage] = useState(getCurrentLanguage());
   const [darkMode, setDarkMode] = useState(false);
+  const [biometricAvailable, setBiometricAvailable] = useState(false);
+  const [biometricEnabled, setBiometricEnabled] = useState(false);
+
+  useEffect(() => {
+    checkBiometricAvailability();
+  }, []);
+
+  const checkBiometricAvailability = async () => {
+    const available = await securityService.isBiometricAvailable();
+    setBiometricAvailable(available);
+  };
+
+  const handleLanguageChange = async (newLanguage: string) => {
+    await changeLanguage(newLanguage);
+    setLanguage(newLanguage);
+  };
 
   const handleDeleteAccount = () => {
     Alert.alert(
@@ -107,15 +128,21 @@ export const SettingsScreen: React.FC = () => {
           
           <View style={styles.settingRow}>
             <View style={styles.settingInfo}>
-              <Text style={styles.settingLabel}>Language</Text>
-              <Text style={styles.settingDescription}>English</Text>
+              <Text style={styles.settingLabel}>{t('settings.language')}</Text>
+              <Text style={styles.settingDescription}>
+                {getAvailableLanguages().map(lang => lang.toUpperCase()).join(', ')}
+              </Text>
             </View>
-            <AppButton
-              title="Change"
-              onPress={() => Alert.alert('Language', 'Language selection coming soon')}
-              variant="outline"
-              size="small"
-            />
+            {getAvailableLanguages().map((lang) => (
+              <AppButton
+                key={lang}
+                title={lang.toUpperCase()}
+                onPress={() => handleLanguageChange(lang)}
+                variant={language === lang ? 'primary' : 'outline'}
+                size="small"
+                style={styles.languageButton}
+              />
+            ))}
           </View>
 
           <View style={styles.settingRow}>

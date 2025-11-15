@@ -1,0 +1,100 @@
+{
+  "common": {
+    "loading": "Chargement...",
+    "error": "Erreur",
+    "success": "Succès",
+    "cancel": "Annuler",
+    "save": "Enregistrer",
+    "delete": "Supprimer",
+    "edit": "Modifier",
+    "confirm": "Confirmer",
+    "back": "Retour",
+    "next": "Suivant",
+    "skip": "Passer",
+    "search": "Rechercher",
+    "filter": "Filtrer",
+    "sort": "Trier",
+    "close": "Fermer"
+  },
+  "auth": {
+    "login": "Connexion",
+    "register": "S'inscrire",
+    "logout": "Déconnexion",
+    "email": "Email",
+    "password": "Mot de passe",
+    "name": "Nom",
+    "phone": "Téléphone",
+    "forgotPassword": "Mot de passe oublié?",
+    "loginSuccess": "Connexion réussie",
+    "logoutSuccess": "Déconnexion réussie",
+    "invalidCredentials": "Email ou mot de passe invalide"
+  },
+  "booking": {
+    "bookAppointment": "Réserver un Rendez-vous",
+    "selectService": "Sélectionner un Service",
+    "selectDate": "Sélectionner une Date",
+    "selectTime": "Sélectionner une Heure",
+    "confirmBooking": "Confirmer la Réservation",
+    "bookingConfirmed": "Réservation confirmée!",
+    "cancelBooking": "Annuler la Réservation",
+    "reschedule": "Reprogrammer",
+    "rebook": "Réserver à nouveau",
+    "upcoming": "À venir",
+    "past": "Passé",
+    "notes": "Notes",
+    "specialRequests": "Demandes Spéciales"
+  },
+  "provider": {
+    "dashboard": "Tableau de bord",
+    "services": "Services",
+    "availability": "Disponibilité",
+    "bookings": "Réservations",
+    "profile": "Profil",
+    "addService": "Ajouter un Service",
+    "editService": "Modifier le Service",
+    "manageAvailability": "Gérer la Disponibilité",
+    "todayAppointments": "Rendez-vous d'Aujourd'hui",
+    "thisWeek": "Cette Semaine",
+    "thisMonth": "Ce Mois",
+    "revenue": "Revenus"
+  },
+  "customer": {
+    "home": "Accueil",
+    "myBookings": "Mes Réservations",
+    "profile": "Profil",
+    "categories": "Catégories",
+    "featuredProviders": "Prestataires en Vedette",
+    "writeReview": "Écrire un Avis",
+    "submitReview": "Soumettre un Avis"
+  },
+  "settings": {
+    "settings": "Paramètres",
+    "notifications": "Notifications",
+    "language": "Langue",
+    "theme": "Thème",
+    "darkMode": "Mode Sombre",
+    "account": "Compte",
+    "deleteAccount": "Supprimer le Compte",
+    "changePassword": "Changer le Mot de passe"
+  },
+  "errors": {
+    "networkError": "Erreur réseau. Veuillez vérifier votre connexion.",
+    "serverError": "Erreur serveur. Veuillez réessayer plus tard.",
+    "unauthorized": "Non autorisé. Veuillez vous reconnecter.",
+    "notFound": "Ressource introuvable.",
+    "validationError": "Veuillez vérifier votre saisie.",
+    "offline": "Vous êtes hors ligne. Certaines fonctionnalités peuvent ne pas fonctionner."
+  },
+  "onboarding": {
+    "welcome": "Bienvenue dans la Réservation de Rendez-vous",
+    "welcomeDescription": "Réservez des rendez-vous avec des salons de coiffure, des spas et des tuteurs facilement.",
+    "browse": "Parcourir et Rechercher",
+    "browseDescription": "Trouvez le prestataire de services parfait par catégorie, emplacement ou note.",
+    "easyBooking": "Réservation Facile",
+    "easyBookingDescription": "Sélectionnez le service, la date et l'heure en quelques touches.",
+    "manage": "Tout Gérer",
+    "manageDescription": "Suivez vos réservations, laissez des avis et gérez votre profil.",
+    "getStarted": "Commencer"
+  }
+}
+

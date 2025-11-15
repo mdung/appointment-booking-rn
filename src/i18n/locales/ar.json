@@ -1,0 +1,100 @@
+{
+  "common": {
+    "loading": "جاري التحميل...",
+    "error": "خطأ",
+    "success": "نجح",
+    "cancel": "إلغاء",
+    "save": "حفظ",
+    "delete": "حذف",
+    "edit": "تعديل",
+    "confirm": "تأكيد",
+    "back": "رجوع",
+    "next": "التالي",
+    "skip": "تخطي",
+    "search": "بحث",
+    "filter": "تصفية",
+    "sort": "ترتيب",
+    "close": "إغلاق"
+  },
+  "auth": {
+    "login": "تسجيل الدخول",
+    "register": "التسجيل",
+    "logout": "تسجيل الخروج",
+    "email": "البريد الإلكتروني",
+    "password": "كلمة المرور",
+    "name": "الاسم",
+    "phone": "الهاتف",
+    "forgotPassword": "نسيت كلمة المرور؟",
+    "loginSuccess": "تم تسجيل الدخول بنجاح",
+    "logoutSuccess": "تم تسجيل الخروج بنجاح",
+    "invalidCredentials": "البريد الإلكتروني أو كلمة المرور غير صحيحة"
+  },
+  "booking": {
+    "bookAppointment": "حجز موعد",
+    "selectService": "اختر الخدمة",
+    "selectDate": "اختر التاريخ",
+    "selectTime": "اختر الوقت",
+    "confirmBooking": "تأكيد الحجز",
+    "bookingConfirmed": "تم تأكيد الحجز!",
+    "cancelBooking": "إلغاء الحجز",
+    "reschedule": "إعادة الجدولة",
+    "rebook": "إعادة الحجز",
+    "upcoming": "القادمة",
+    "past": "السابقة",
+    "notes": "ملاحظات",
+    "specialRequests": "طلبات خاصة"
+  },
+  "provider": {
+    "dashboard": "لوحة التحكم",
+    "services": "الخدمات",
+    "availability": "التوفر",
+    "bookings": "الحجوزات",
+    "profile": "الملف الشخصي",
+    "addService": "إضافة خدمة",
+    "editService": "تعديل الخدمة",
+    "manageAvailability": "إدارة التوفر",
+    "todayAppointments": "مواعيد اليوم",
+    "thisWeek": "هذا الأسبوع",
+    "thisMonth": "هذا الشهر",
+    "revenue": "الإيرادات"
+  },
+  "customer": {
+    "home": "الرئيسية",
+    "myBookings": "حجوزاتي",
+    "profile": "الملف الشخصي",
+    "categories": "الفئات",
+    "featuredProviders": "مقدمي الخدمات المميزين",
+    "writeReview": "كتابة مراجعة",
+    "submitReview": "إرسال المراجعة"
+  },
+  "settings": {
+    "settings": "الإعدادات",
+    "notifications": "الإشعارات",
+    "language": "اللغة",
+    "theme": "المظهر",
+    "darkMode": "الوضع الداكن",
+    "account": "الحساب",
+    "deleteAccount": "حذف الحساب",
+    "changePassword": "تغيير كلمة المرور"
+  },
+  "errors": {
+    "networkError": "خطأ في الشبكة. يرجى التحقق من اتصالك.",
+    "serverError": "خطأ في الخادم. يرجى المحاولة مرة أخرى لاحقاً.",
+    "unauthorized": "غير مصرح. يرجى تسجيل الدخول مرة أخرى.",
+    "notFound": "الموارد غير موجودة.",
+    "validationError": "يرجى التحقق من إدخالك.",
+    "offline": "أنت غير متصل. قد لا تعمل بعض الميزات."
+  },
+  "onboarding": {
+    "welcome": "مرحباً بك في حجز المواعيد",
+    "welcomeDescription": "احجز مواعيد مع صالونات التجميل والمنتجعات الصحية والمعلمين بسهولة.",
+    "browse": "تصفح وابحث",
+    "browseDescription": "ابحث عن مقدم الخدمة المثالي حسب الفئة أو الموقع أو التقييم.",
+    "easyBooking": "حجز سهل",
+    "easyBookingDescription": "اختر الخدمة والتاريخ والوقت ببضع نقرات فقط.",
+    "manage": "إدارة كل شيء",
+    "manageDescription": "تتبع حجوزاتك واترك المراجعات وأدر ملفك الشخصي.",
+    "getStarted": "ابدأ"
+  }
+}
+

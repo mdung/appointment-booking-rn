@@ -18,6 +18,7 @@ import { BookingSelectDateScreen } from '../screens/customer/BookingSelectDateSc
 import { BookingSelectTimeScreen } from '../screens/customer/BookingSelectTimeScreen';
 import { BookingConfirmScreen } from '../screens/customer/BookingConfirmScreen';
 import { BookingDetailScreen } from '../screens/customer/BookingDetailScreen';
+import { ReviewSubmissionScreen } from '../screens/customer/ReviewSubmissionScreen';
 import { theme } from '../config/theme';
 
 const Stack = createStackNavigator<CustomerStackParamList>();
@@ -105,6 +106,11 @@ export const CustomerNavigator: React.FC = () => {
         name="BookingDetail"
         component={BookingDetailScreen}
         options={{ title: 'Booking Details' }}
+      />
+      <Stack.Screen
+        name="ReviewSubmission"
+        component={ReviewSubmissionScreen}
+        options={{ title: 'Write Review' }}
       />
     </Stack.Navigator>
   );

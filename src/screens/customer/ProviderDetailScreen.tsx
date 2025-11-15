@@ -4,15 +4,19 @@
  */
 
 import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, ScrollView } from 'react-native';
+import { View, Text, StyleSheet, ScrollView, FlatList, TouchableOpacity } from 'react-native';
 import { useNavigation, useRoute, RouteProp } from '@react-navigation/native';
 import { StackNavigationProp } from '@react-navigation/stack';
 import { ScreenContainer } from '../../components/layout/ScreenContainer';
 import { AppButton } from '../../components/ui/AppButton';
 import { AppCard } from '../../components/ui/AppCard';
 import { LoadingSpinner } from '../../components/ui/LoadingSpinner';
+import { StarRating } from '../../components/ui/StarRating';
 import { providerApi } from '../../services/providerApi';
+import { reviewApi } from '../../services/reviewApi';
 import { Provider, Service } from '../../models/Provider';
+import { Review } from '../../models/Review';
+import { formatDate } from '../../utils/dateTime';
 import { theme } from '../../config/theme';
 import { CustomerStackParamList } from '../../navigation/types';
 
@@ -25,10 +29,13 @@ export const ProviderDetailScreen: React.FC = () => {
   const { providerId } = route.params;
 
   const [provider, setProvider] = useState<Provider | null>(null);
+  const [reviews, setReviews] = useState<Review[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [isLoadingReviews, setIsLoadingReviews] = useState(false);
 
   useEffect(() => {
     loadProvider();
+    loadReviews();
   }, [providerId]);
 
   const loadProvider = async () => {
@@ -40,6 +47,18 @@ export const ProviderDetailScreen: React.FC = () => {
       console.error('Error loading provider:', error);
     } finally {
       setIsLoading(false);
+    }
+  };
+
+  const loadReviews = async () => {
+    try {
+      setIsLoadingReviews(true);
+      const data = await reviewApi.getProviderReviews(providerId);
+      setReviews(data);
+    } catch (error) {
+      console.error('Error loading reviews:', error);
+    } finally {
+      setIsLoadingReviews(false);
     }
   };
 
@@ -104,6 +123,31 @@ export const ProviderDetailScreen: React.FC = () => {
             provider.services.map(renderService)
           ) : (
             <Text style={styles.noServices}>No services available</Text>
+          )}
+        </AppCard>
+
+        <AppCard style={styles.infoCard}>
+          <Text style={styles.sectionTitle}>Reviews ({provider.totalReviews})</Text>
+          {isLoadingReviews ? (
+            <LoadingSpinner />
+          ) : reviews.length > 0 ? (
+            <FlatList
+              data={reviews.slice(0, 5)}
+              renderItem={({ item }) => (
+                <View style={styles.reviewItem}>
+                  <View style={styles.reviewHeader}>
+                    <Text style={styles.reviewUser}>{item.user?.name || 'Anonymous'}</Text>
+                    <StarRating rating={item.rating} readonly size={16} />
+                  </View>
+                  <Text style={styles.reviewComment}>{item.comment}</Text>
+                  <Text style={styles.reviewDate}>{formatDate(item.createdAt, 'MMM dd, yyyy')}</Text>
+                </View>
+              )}
+              keyExtractor={(item) => item.id}
+              scrollEnabled={false}
+            />
+          ) : (
+            <Text style={styles.noReviews}>No reviews yet</Text>
           )}
         </AppCard>
 
@@ -200,6 +244,38 @@ const styles = StyleSheet.create({
   bookButton: {
     marginTop: theme.spacing.lg,
     marginBottom: theme.spacing.xl,
+  },
+  reviewItem: {
+    paddingVertical: theme.spacing.sm,
+    borderBottomWidth: 1,
+    borderBottomColor: theme.colors.borderLight,
+  },
+  reviewHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: theme.spacing.xs,
+  },
+  reviewUser: {
+    fontSize: theme.typography.body,
+    fontWeight: '600',
+    color: theme.colors.text,
+  },
+  reviewComment: {
+    fontSize: theme.typography.bodySmall,
+    color: theme.colors.textSecondary,
+    marginBottom: theme.spacing.xs,
+  },
+  reviewDate: {
+    fontSize: theme.typography.caption,
+    color: theme.colors.textTertiary,
+  },
+  noReviews: {
+    fontSize: theme.typography.body,
+    color: theme.colors.textTertiary,
+    fontStyle: 'italic',
+    textAlign: 'center',
+    padding: theme.spacing.md,
   },
 });
 

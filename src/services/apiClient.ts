@@ -54,7 +54,7 @@ class ApiClient {
             // Unauthorized - clear token and redirect to login
             await AsyncStorage.removeItem(STORAGE_KEYS.AUTH_TOKEN);
             await AsyncStorage.removeItem(STORAGE_KEYS.USER_DATA);
-            // TODO: Navigate to login screen (handle in navigation)
+            // Navigation will be handled by AppNavigator based on auth state
           }
           
           // You can add more error handling here

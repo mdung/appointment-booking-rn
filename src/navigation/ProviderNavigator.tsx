@@ -14,6 +14,7 @@ import { ProfileScreen } from '../screens/common/ProfileScreen';
 import { ProviderBookingDetailScreen } from '../screens/provider/ProviderBookingDetailScreen';
 import { EditServiceScreen } from '../screens/provider/EditServiceScreen';
 import { AvailabilityScreen } from '../screens/provider/AvailabilityScreen';
+import { ProviderProfileEditScreen } from '../screens/provider/ProviderProfileEditScreen';
 import { theme } from '../config/theme';
 
 const Stack = createStackNavigator<ProviderStackParamList>();
@@ -81,6 +82,11 @@ export const ProviderNavigator: React.FC = () => {
         name="Availability"
         component={AvailabilityScreen}
         options={{ title: 'Availability' }}
+      />
+      <Stack.Screen
+        name="ProviderProfileEdit"
+        component={ProviderProfileEditScreen}
+        options={{ title: 'Provider Profile' }}
       />
     </Stack.Navigator>
   );

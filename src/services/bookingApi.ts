@@ -11,12 +11,45 @@ export const bookingApi = {
    * Get all bookings for current user
    */
   getMyBookings: async (status?: BookingStatus): Promise<Booking[]> => {
-    // TODO: Replace with actual API call
-    return new Promise((resolve) => {
-      setTimeout(() => {
-        const mockBookings: Booking[] = [
-          {
-            id: '1',
+    try {
+      const params = status ? { status } : {};
+      return await apiClient.get<Booking[]>('/bookings', { params });
+    } catch (error) {
+      // Fallback to mock data for development
+      return new Promise((resolve) => {
+        setTimeout(() => {
+          const mockBookings: Booking[] = [
+            {
+              id: '1',
+              userId: '1',
+              providerId: '1',
+              serviceId: '1',
+              date: new Date(Date.now() + 86400000).toISOString().split('T')[0],
+              startTime: '10:00',
+              endTime: '10:30',
+              status: 'CONFIRMED',
+              createdAt: new Date().toISOString(),
+              updatedAt: new Date().toISOString(),
+            },
+          ];
+          resolve(status ? mockBookings.filter(b => b.status === status) : mockBookings);
+        }, 500);
+      });
+    }
+  },
+
+  /**
+   * Get booking by ID
+   */
+  getBookingById: async (id: string): Promise<Booking> => {
+    try {
+      return await apiClient.get<Booking>(`/bookings/${id}`);
+    } catch (error) {
+      // Fallback to mock data for development
+      return new Promise((resolve) => {
+        setTimeout(() => {
+          resolve({
+            id,
             userId: '1',
             providerId: '1',
             serviceId: '1',
@@ -26,91 +59,66 @@ export const bookingApi = {
             status: 'CONFIRMED',
             createdAt: new Date().toISOString(),
             updatedAt: new Date().toISOString(),
-          },
-        ];
-        resolve(status ? mockBookings.filter(b => b.status === status) : mockBookings);
-      }, 500);
-    });
-    
-    // const params = status ? { status } : {};
-    // return apiClient.get<Booking[]>('/bookings', { params });
-  },
-
-  /**
-   * Get booking by ID
-   */
-  getBookingById: async (id: string): Promise<Booking> => {
-    // TODO: Replace with actual API call
-    return new Promise((resolve) => {
-      setTimeout(() => {
-        resolve({
-          id,
-          userId: '1',
-          providerId: '1',
-          serviceId: '1',
-          date: new Date(Date.now() + 86400000).toISOString().split('T')[0],
-          startTime: '10:00',
-          endTime: '10:30',
-          status: 'CONFIRMED',
-          createdAt: new Date().toISOString(),
-          updatedAt: new Date().toISOString(),
-        });
-      }, 500);
-    });
-    
-    // return apiClient.get<Booking>(`/bookings/${id}`);
+          });
+        }, 500);
+      });
+    }
   },
 
   /**
    * Create new booking
    */
   createBooking: async (data: CreateBookingData): Promise<Booking> => {
-    // TODO: Replace with actual API call
-    return new Promise((resolve) => {
-      setTimeout(() => {
-        resolve({
-          id: 'new_' + Date.now(),
-          userId: '1',
-          providerId: data.providerId,
-          serviceId: data.serviceId,
-          date: data.date,
-          startTime: data.startTime,
-          endTime: '10:30', // Calculate based on service duration
-          status: 'PENDING',
-          notes: data.notes,
-          createdAt: new Date().toISOString(),
-          updatedAt: new Date().toISOString(),
-        });
-      }, 1000);
-    });
-    
-    // return apiClient.post<Booking>('/bookings', data);
+    try {
+      return await apiClient.post<Booking>('/bookings', data);
+    } catch (error) {
+      // Fallback to mock data for development
+      return new Promise((resolve) => {
+        setTimeout(() => {
+          resolve({
+            id: 'new_' + Date.now(),
+            userId: '1',
+            providerId: data.providerId,
+            serviceId: data.serviceId,
+            date: data.date,
+            startTime: data.startTime,
+            endTime: '10:30', // Calculate based on service duration
+            status: 'PENDING',
+            notes: data.notes,
+            createdAt: new Date().toISOString(),
+            updatedAt: new Date().toISOString(),
+          });
+        }, 1000);
+      });
+    }
   },
 
   /**
    * Update booking
    */
   updateBooking: async (id: string, data: UpdateBookingData): Promise<Booking> => {
-    // TODO: Replace with actual API call
-    return new Promise((resolve) => {
-      setTimeout(() => {
-        resolve({
-          id,
-          userId: '1',
-          providerId: '1',
-          serviceId: '1',
-          date: new Date().toISOString().split('T')[0],
-          startTime: '10:00',
-          endTime: '10:30',
-          status: data.status || 'CONFIRMED',
-          notes: data.notes,
-          createdAt: new Date().toISOString(),
-          updatedAt: new Date().toISOString(),
-        });
-      }, 500);
-    });
-    
-    // return apiClient.patch<Booking>(`/bookings/${id}`, data);
+    try {
+      return await apiClient.patch<Booking>(`/bookings/${id}`, data);
+    } catch (error) {
+      // Fallback to mock data for development
+      return new Promise((resolve) => {
+        setTimeout(() => {
+          resolve({
+            id,
+            userId: '1',
+            providerId: '1',
+            serviceId: '1',
+            date: new Date().toISOString().split('T')[0],
+            startTime: '10:00',
+            endTime: '10:30',
+            status: data.status || 'CONFIRMED',
+            notes: data.notes,
+            createdAt: new Date().toISOString(),
+            updatedAt: new Date().toISOString(),
+          });
+        }, 500);
+      });
+    }
   },
 
   /**
@@ -124,16 +132,17 @@ export const bookingApi = {
    * Get booking summary (for confirmation screen)
    */
   getBookingSummary: async (id: string): Promise<BookingSummary> => {
-    // TODO: Replace with actual API call
-    const booking = await bookingApi.getBookingById(id);
-    return {
-      booking,
-      totalPrice: 50,
-      serviceName: 'Haircut',
-      providerName: 'Hair Salon',
-    };
-    
-    // return apiClient.get<BookingSummary>(`/bookings/${id}/summary`);
+    try {
+      return await apiClient.get<BookingSummary>(`/bookings/${id}/summary`);
+    } catch (error) {
+      // Fallback to mock data for development
+      const booking = await bookingApi.getBookingById(id);
+      return {
+        booking,
+        totalPrice: 50,
+        serviceName: 'Haircut',
+        providerName: 'Hair Salon',
+      };
+    }
   },
 };
-

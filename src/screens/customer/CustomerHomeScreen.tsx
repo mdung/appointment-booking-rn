@@ -3,7 +3,7 @@
  * Main screen for customers to browse services and providers
  */
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { View, Text, StyleSheet, FlatList, TouchableOpacity } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { StackNavigationProp } from '@react-navigation/stack';
@@ -17,6 +17,7 @@ import { Provider } from '../../models/Provider';
 import { theme } from '../../config/theme';
 import { CustomerStackParamList } from '../../navigation/types';
 import { PROVIDER_TYPES } from '../../utils/constants';
+import { debounce } from '../../utils/debounce';
 
 type CustomerHomeScreenNavigationProp = StackNavigationProp<CustomerStackParamList, 'CustomerTabs'>;
 
@@ -36,10 +37,10 @@ export const CustomerHomeScreen: React.FC = () => {
     loadProviders();
   }, []);
 
-  const loadProviders = async () => {
+  const loadProviders = async (search?: string) => {
     try {
       setIsLoading(true);
-      const data = await providerApi.getProviders();
+      const data = await providerApi.getProviders(search ? { search } : undefined);
       setProviders(data);
     } catch (error) {
       console.error('Error loading providers:', error);
@@ -47,6 +48,22 @@ export const CustomerHomeScreen: React.FC = () => {
       setIsLoading(false);
     }
   };
+
+  // Debounced search
+  const debouncedSearch = useMemo(
+    () => debounce((query: string) => {
+      if (query.trim()) {
+        loadProviders(query);
+      } else {
+        loadProviders();
+      }
+    }, 500),
+    []
+  );
+
+  useEffect(() => {
+    debouncedSearch(searchQuery);
+  }, [searchQuery, debouncedSearch]);
 
   const handleCategoryPress = (categoryId: string) => {
     navigation.navigate('ProviderList', { category: categoryId });
@@ -103,10 +120,17 @@ export const CustomerHomeScreen: React.FC = () => {
 
         <SectionHeader title="Featured Providers" />
         <FlatList
-          data={providers.slice(0, 5)}
+          data={searchQuery ? providers : providers.slice(0, 5)}
           renderItem={renderProvider}
           keyExtractor={(item) => item.id}
           showsVerticalScrollIndicator={false}
+          ListEmptyComponent={
+            searchQuery ? (
+              <View style={styles.emptyContainer}>
+                <Text style={styles.emptyText}>No providers found</Text>
+              </View>
+            ) : null
+          }
         />
       </View>
     </ScreenContainer>
@@ -158,6 +182,14 @@ const styles = StyleSheet.create({
   providerAddress: {
     fontSize: theme.typography.caption,
     color: theme.colors.textTertiary,
+  },
+  emptyContainer: {
+    padding: theme.spacing.xl,
+    alignItems: 'center',
+  },
+  emptyText: {
+    fontSize: theme.typography.body,
+    color: theme.colors.textSecondary,
   },
 });
 

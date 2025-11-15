@@ -27,6 +27,7 @@ export type CustomerStackParamList = {
   BookingSelectTime: { providerId: string; serviceId: string; date: string };
   BookingConfirm: { providerId: string; serviceId: string; date: string; startTime: string };
   BookingDetail: { bookingId: string };
+  ReviewSubmission: { bookingId: string; providerId: string };
 };
 
 export type ProviderTabParamList = {
@@ -41,6 +42,7 @@ export type ProviderStackParamList = {
   ProviderBookingDetail: { bookingId: string };
   EditService: { serviceId?: string };
   Availability: undefined;
+  ProviderProfileEdit: undefined;
 };
 
 export type AdminStackParamList = {

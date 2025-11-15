@@ -3,7 +3,7 @@
  */
 
 import React from 'react';
-import { View, Image, Text, StyleSheet, ViewStyle } from 'react-native';
+import { View, Image, Text, StyleSheet, ViewStyle, TouchableOpacity } from 'react-native';
 import { theme } from '../../config/theme';
 
 interface AppAvatarProps {
@@ -11,6 +11,7 @@ interface AppAvatarProps {
   name?: string;
   size?: number;
   style?: ViewStyle;
+  onPress?: () => void;
 }
 
 export const AppAvatar: React.FC<AppAvatarProps> = ({
@@ -18,6 +19,7 @@ export const AppAvatar: React.FC<AppAvatarProps> = ({
   name,
   size = 40,
   style,
+  onPress,
 }) => {
   const getInitials = (name: string): string => {
     return name
@@ -34,30 +36,45 @@ export const AppAvatar: React.FC<AppAvatarProps> = ({
     borderRadius: size / 2,
   };
 
-  if (uri) {
+  const AvatarContent = () => {
+    if (uri) {
+      return (
+        <Image
+          source={{ uri }}
+          style={[styles.avatar, avatarStyle]}
+        />
+      );
+    }
+
     return (
-      <Image
-        source={{ uri }}
-        style={[styles.avatar, avatarStyle, style]}
-      />
+      <View
+        style={[
+          styles.avatar,
+          styles.avatarPlaceholder,
+          avatarStyle,
+          { backgroundColor: theme.colors.primary },
+        ]}
+      >
+        {name && (
+          <Text style={[styles.initials, { fontSize: size * 0.4 }]}>
+            {getInitials(name)}
+          </Text>
+        )}
+      </View>
+    );
+  };
+
+  if (onPress) {
+    return (
+      <TouchableOpacity onPress={onPress} style={style}>
+        <AvatarContent />
+      </TouchableOpacity>
     );
   }
 
   return (
-    <View
-      style={[
-        styles.avatar,
-        styles.avatarPlaceholder,
-        avatarStyle,
-        { backgroundColor: theme.colors.primary },
-        style,
-      ]}
-    >
-      {name && (
-        <Text style={[styles.initials, { fontSize: size * 0.4 }]}>
-          {getInitials(name)}
-        </Text>
-      )}
+    <View style={style}>
+      <AvatarContent />
     </View>
   );
 };

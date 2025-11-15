@@ -19,6 +19,7 @@ import { BookingSelectTimeScreen } from '../screens/customer/BookingSelectTimeSc
 import { BookingConfirmScreen } from '../screens/customer/BookingConfirmScreen';
 import { BookingDetailScreen } from '../screens/customer/BookingDetailScreen';
 import { ReviewSubmissionScreen } from '../screens/customer/ReviewSubmissionScreen';
+import { PaymentScreen } from '../screens/customer/PaymentScreen';
 import { theme } from '../config/theme';
 
 const Stack = createStackNavigator<CustomerStackParamList>();
@@ -111,6 +112,16 @@ export const CustomerNavigator: React.FC = () => {
         name="ReviewSubmission"
         component={ReviewSubmissionScreen}
         options={{ title: 'Write Review' }}
+      />
+      <Stack.Screen
+        name="Payment"
+        component={PaymentScreen}
+        options={{ title: 'Payment' }}
+      />
+      <Stack.Screen
+        name="Settings"
+        component={SettingsScreen}
+        options={{ title: 'Settings' }}
       />
     </Stack.Navigator>
   );

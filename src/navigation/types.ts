@@ -28,6 +28,8 @@ export type CustomerStackParamList = {
   BookingConfirm: { providerId: string; serviceId: string; date: string; startTime: string };
   BookingDetail: { bookingId: string };
   ReviewSubmission: { bookingId: string; providerId: string };
+  Payment: { bookingId: string; amount: number };
+  Settings: undefined;
 };
 
 export type ProviderTabParamList = {
@@ -54,6 +56,7 @@ export type AdminStackParamList = {
 
 export type RootStackParamList = {
   Splash: undefined;
+  Onboarding: undefined;
   Auth: NavigatorScreenParams<AuthStackParamList>;
   Customer: NavigatorScreenParams<CustomerStackParamList>;
   Provider: NavigatorScreenParams<ProviderStackParamList>;

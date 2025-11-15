@@ -14,6 +14,8 @@ import { BookingStatusTag } from '../../components/booking/BookingStatusTag';
 import { LoadingSpinner } from '../../components/ui/LoadingSpinner';
 import { useBooking } from '../../context/BookingContext';
 import { bookingApi } from '../../services/bookingApi';
+import { useNavigation } from '@react-navigation/native';
+import { StackNavigationProp } from '@react-navigation/stack';
 import { Booking } from '../../models/Booking';
 import { formatDate, formatTime } from '../../utils/dateTime';
 import { theme } from '../../config/theme';
@@ -81,6 +83,15 @@ export const BookingDetailScreen: React.FC = () => {
     }
   };
 
+  const handleReschedule = () => {
+    if (booking) {
+      navigation.navigate('BookingSelectDate', {
+        providerId: booking.providerId,
+        serviceId: booking.serviceId,
+      });
+    }
+  };
+
   if (isLoading) {
     return <LoadingSpinner fullScreen />;
   }
@@ -127,14 +138,23 @@ export const BookingDetailScreen: React.FC = () => {
 
         <View style={styles.actions}>
           {canCancel && (
-            <AppButton
-              title="Cancel Booking"
-              onPress={handleCancel}
-              loading={isCancelling}
-              variant="outline"
-              fullWidth
-              style={[styles.button, { borderColor: theme.colors.error }]}
-            />
+            <>
+              <AppButton
+                title="Reschedule"
+                onPress={handleReschedule}
+                variant="outline"
+                fullWidth
+                style={styles.button}
+              />
+              <AppButton
+                title="Cancel Booking"
+                onPress={handleCancel}
+                loading={isCancelling}
+                variant="outline"
+                fullWidth
+                style={[styles.button, { borderColor: theme.colors.error }]}
+              />
+            </>
           )}
           {canRebook && (
             <AppButton

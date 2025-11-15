@@ -10,8 +10,10 @@ import { StackNavigationProp } from '@react-navigation/stack';
 import { ScreenContainer } from '../../components/layout/ScreenContainer';
 import { AppButton } from '../../components/ui/AppButton';
 import { AppCard } from '../../components/ui/AppCard';
+import { AppTextInput } from '../../components/ui/AppTextInput';
 import { LoadingSpinner } from '../../components/ui/LoadingSpinner';
 import { useBooking } from '../../context/BookingContext';
+import { notificationService } from '../../services/notificationService';
 import { providerApi } from '../../services/providerApi';
 import { Provider, Service } from '../../models/Provider';
 import { formatDate, formatTime } from '../../utils/dateTime';
@@ -31,6 +33,7 @@ export const BookingConfirmScreen: React.FC = () => {
   const [service, setService] = useState<Service | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [notes, setNotes] = useState('');
 
   useEffect(() => {
     loadData();
@@ -55,12 +58,24 @@ export const BookingConfirmScreen: React.FC = () => {
   const handleConfirm = async () => {
     try {
       setIsSubmitting(true);
-      await createBooking({
+      const booking = await createBooking({
         providerId,
         serviceId,
         date,
         startTime,
+        notes: notes.trim() || undefined,
       });
+      
+      // Schedule notification reminder
+      if (provider) {
+        await notificationService.scheduleBookingReminder(
+          booking.id,
+          date,
+          startTime,
+          provider.name
+        );
+      }
+      
       Alert.alert(
         'Success',
         'Booking confirmed!',
@@ -124,6 +139,18 @@ export const BookingConfirmScreen: React.FC = () => {
           </View>
         </AppCard>
 
+        <AppCard style={styles.summaryCard}>
+          <Text style={styles.sectionTitle}>Special Requests (Optional)</Text>
+          <AppTextInput
+            placeholder="Any special requests or notes..."
+            value={notes}
+            onChangeText={setNotes}
+            multiline
+            numberOfLines={3}
+            style={styles.notesInput}
+          />
+        </AppCard>
+
         <AppButton
           title="Confirm Booking"
           onPress={handleConfirm}
@@ -179,6 +206,9 @@ const styles = StyleSheet.create({
     fontSize: theme.typography.h3,
     fontWeight: '700',
     color: theme.colors.primary,
+  },
+  notesInput: {
+    minHeight: 80,
   },
   confirmButton: {
     marginTop: theme.spacing.lg,

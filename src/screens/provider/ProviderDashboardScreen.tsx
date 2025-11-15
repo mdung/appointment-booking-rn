@@ -4,7 +4,7 @@
  */
 
 import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, FlatList, TouchableOpacity } from 'react-native';
+import { View, Text, StyleSheet, FlatList, TouchableOpacity, ScrollView } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { StackNavigationProp } from '@react-navigation/stack';
 import { ScreenContainer } from '../../components/layout/ScreenContainer';
@@ -12,9 +12,10 @@ import { AppCard } from '../../components/ui/AppCard';
 import { LoadingSpinner } from '../../components/ui/LoadingSpinner';
 import { bookingApi } from '../../services/bookingApi';
 import { Booking } from '../../models/Booking';
-import { formatTime } from '../../utils/dateTime';
+import { formatTime, formatDate } from '../../utils/dateTime';
 import { theme } from '../../config/theme';
 import { ProviderStackParamList } from '../../navigation/types';
+import { LineChart } from 'react-native-chart-kit';
 
 type ProviderDashboardScreenNavigationProp = StackNavigationProp<ProviderStackParamList, 'ProviderTabs'>;
 
@@ -22,9 +23,16 @@ export const ProviderDashboardScreen: React.FC = () => {
   const navigation = useNavigation<ProviderDashboardScreenNavigationProp>();
   const [todayBookings, setTodayBookings] = useState<Booking[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [stats, setStats] = useState({
+    thisWeek: 0,
+    thisMonth: 0,
+    totalRevenue: 0,
+    averageRating: 4.5,
+  });
 
   useEffect(() => {
     loadTodayBookings();
+    loadStats();
   }, []);
 
   const loadTodayBookings = async () => {
@@ -38,6 +46,39 @@ export const ProviderDashboardScreen: React.FC = () => {
       console.error('Error loading bookings:', error);
     } finally {
       setIsLoading(false);
+    }
+  };
+
+  const loadStats = async () => {
+    try {
+      const bookings = await bookingApi.getMyBookings();
+      const now = new Date();
+      const weekAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
+      const monthAgo = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000);
+
+      const thisWeek = bookings.filter(b => {
+        const bookingDate = new Date(b.date);
+        return bookingDate >= weekAgo && b.status === 'COMPLETED';
+      }).length;
+
+      const thisMonth = bookings.filter(b => {
+        const bookingDate = new Date(b.date);
+        return bookingDate >= monthAgo && b.status === 'COMPLETED';
+      }).length;
+
+      // Calculate revenue (mock - should come from backend)
+      const totalRevenue = bookings
+        .filter(b => b.status === 'COMPLETED')
+        .reduce((sum, b) => sum + (b.service?.price || 0), 0);
+
+      setStats({
+        thisWeek,
+        thisMonth,
+        totalRevenue,
+        averageRating: 4.5, // TODO: Get from provider data
+      });
+    } catch (error) {
+      console.error('Error loading stats:', error);
     }
   };
 
@@ -62,12 +103,59 @@ export const ProviderDashboardScreen: React.FC = () => {
     return <LoadingSpinner fullScreen />;
   }
 
+  const chartData = {
+    labels: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
+    datasets: [
+      {
+        data: [2, 3, 4, 3, 5, 4, 2], // Mock data - should come from backend
+        color: (opacity = 1) => `rgba(99, 102, 241, ${opacity})`,
+        strokeWidth: 2,
+      },
+    ],
+  };
+
   return (
-    <ScreenContainer>
-      <View style={styles.container}>
-        <AppCard style={styles.statsCard}>
-          <Text style={styles.statsTitle}>Today's Appointments</Text>
-          <Text style={styles.statsValue}>{todayBookings.length}</Text>
+    <ScreenContainer scrollable>
+      <ScrollView style={styles.container}>
+        <View style={styles.statsGrid}>
+          <AppCard style={styles.statCard}>
+            <Text style={styles.statLabel}>Today</Text>
+            <Text style={styles.statValue}>{todayBookings.length}</Text>
+          </AppCard>
+          <AppCard style={styles.statCard}>
+            <Text style={styles.statLabel}>This Week</Text>
+            <Text style={styles.statValue}>{stats.thisWeek}</Text>
+          </AppCard>
+          <AppCard style={styles.statCard}>
+            <Text style={styles.statLabel}>This Month</Text>
+            <Text style={styles.statValue}>{stats.thisMonth}</Text>
+          </AppCard>
+          <AppCard style={styles.statCard}>
+            <Text style={styles.statLabel}>Revenue</Text>
+            <Text style={styles.statValue}>${stats.totalRevenue}</Text>
+          </AppCard>
+        </View>
+
+        <AppCard style={styles.chartCard}>
+          <Text style={styles.sectionTitle}>Weekly Bookings</Text>
+          <LineChart
+            data={chartData}
+            width={Dimensions.get('window').width - 64}
+            height={220}
+            chartConfig={{
+              backgroundColor: theme.colors.background,
+              backgroundGradientFrom: theme.colors.background,
+              backgroundGradientTo: theme.colors.background,
+              decimalPlaces: 0,
+              color: (opacity = 1) => `rgba(99, 102, 241, ${opacity})`,
+              labelColor: (opacity = 1) => `rgba(17, 24, 39, ${opacity})`,
+              style: {
+                borderRadius: 16,
+              },
+            }}
+            bezier
+            style={styles.chart}
+          />
         </AppCard>
 
         <Text style={styles.sectionTitle}>Today's Schedule</Text>
@@ -93,19 +181,33 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
   },
-  statsCard: {
+  statsGrid: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    justifyContent: 'space-between',
     marginBottom: theme.spacing.lg,
-    backgroundColor: theme.colors.primary,
   },
-  statsTitle: {
-    fontSize: theme.typography.body,
-    color: '#FFFFFF',
+  statCard: {
+    width: '48%',
+    marginBottom: theme.spacing.md,
+    alignItems: 'center',
+  },
+  statLabel: {
+    fontSize: theme.typography.bodySmall,
+    color: theme.colors.textSecondary,
     marginBottom: theme.spacing.xs,
   },
-  statsValue: {
-    fontSize: theme.typography.h1,
+  statValue: {
+    fontSize: theme.typography.h2,
     fontWeight: '700',
-    color: '#FFFFFF',
+    color: theme.colors.primary,
+  },
+  chartCard: {
+    marginBottom: theme.spacing.lg,
+  },
+  chart: {
+    marginVertical: theme.spacing.sm,
+    borderRadius: theme.borderRadius.md,
   },
   sectionTitle: {
     fontSize: theme.typography.h3,

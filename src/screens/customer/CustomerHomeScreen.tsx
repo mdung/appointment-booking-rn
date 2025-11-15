@@ -4,7 +4,7 @@
  */
 
 import React, { useState, useEffect, useMemo } from 'react';
-import { View, Text, StyleSheet, FlatList, TouchableOpacity } from 'react-native';
+import { View, Text, StyleSheet, FlatList, TouchableOpacity, Image } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { StackNavigationProp } from '@react-navigation/stack';
 import { ScreenContainer } from '../../components/layout/ScreenContainer';
@@ -87,6 +87,13 @@ export const CustomerHomeScreen: React.FC = () => {
       style={styles.providerCard}
       onPress={() => handleProviderPress(item.id)}
     >
+      {item.photos && item.photos.length > 0 && (
+        <Image
+          source={{ uri: item.photos[0] }}
+          style={styles.providerImage}
+          resizeMode="cover"
+        />
+      )}
       <Text style={styles.providerName}>{item.name}</Text>
       <Text style={styles.providerType}>{item.type}</Text>
       <Text style={styles.providerRating}>⭐ {item.rating.toFixed(1)}</Text>
@@ -162,6 +169,12 @@ const styles = StyleSheet.create({
   },
   providerCard: {
     marginBottom: theme.spacing.md,
+  },
+  providerImage: {
+    width: '100%',
+    height: 150,
+    borderRadius: theme.borderRadius.md,
+    marginBottom: theme.spacing.sm,
   },
   providerName: {
     fontSize: theme.typography.h4,

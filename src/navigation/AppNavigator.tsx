@@ -8,24 +8,43 @@ import { createStackNavigator } from '@react-navigation/stack';
 import { RootStackParamList } from './types';
 import { useAuth } from '../context/AuthContext';
 import { SplashScreen } from '../screens/common/SplashScreen';
+import { OnboardingScreen } from '../screens/common/OnboardingScreen';
 import { AuthNavigator } from './AuthNavigator';
 import { CustomerNavigator } from './CustomerNavigator';
 import { ProviderNavigator } from './ProviderNavigator';
 import { AdminNavigator } from './AdminNavigator';
 import { LoadingSpinner } from '../components/ui/LoadingSpinner';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { STORAGE_KEYS } from '../utils/constants';
 
 const Stack = createStackNavigator<RootStackParamList>();
 
 export const AppNavigator: React.FC = () => {
   const { isAuthenticated, isLoading, user } = useAuth();
+  const [showOnboarding, setShowOnboarding] = React.useState<boolean | null>(null);
 
-  if (isLoading) {
+  React.useEffect(() => {
+    checkOnboardingStatus();
+  }, []);
+
+  const checkOnboardingStatus = async () => {
+    try {
+      const completed = await AsyncStorage.getItem(STORAGE_KEYS.ONBOARDING_COMPLETED);
+      setShowOnboarding(completed !== 'true');
+    } catch (error) {
+      setShowOnboarding(false);
+    }
+  };
+
+  if (isLoading || showOnboarding === null) {
     return <LoadingSpinner fullScreen message="Loading..." />;
   }
 
   return (
     <Stack.Navigator screenOptions={{ headerShown: false }}>
-      {!isAuthenticated ? (
+      {showOnboarding ? (
+        <Stack.Screen name="Onboarding" component={OnboardingScreen} />
+      ) : !isAuthenticated ? (
         <>
           <Stack.Screen name="Splash" component={SplashScreen} />
           <Stack.Screen name="Auth" component={AuthNavigator} />

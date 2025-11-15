@@ -14,6 +14,7 @@ import { ProfileScreen } from '../screens/common/ProfileScreen';
 import { ProviderBookingDetailScreen } from '../screens/provider/ProviderBookingDetailScreen';
 import { EditServiceScreen } from '../screens/provider/EditServiceScreen';
 import { AvailabilityScreen } from '../screens/provider/AvailabilityScreen';
+import { EnhancedAvailabilityScreen } from '../screens/provider/EnhancedAvailabilityScreen';
 import { ProviderProfileEditScreen } from '../screens/provider/ProviderProfileEditScreen';
 import { theme } from '../config/theme';
 
@@ -80,7 +81,7 @@ export const ProviderNavigator: React.FC = () => {
       />
       <Stack.Screen
         name="Availability"
-        component={AvailabilityScreen}
+        component={EnhancedAvailabilityScreen}
         options={{ title: 'Availability' }}
       />
       <Stack.Screen

@@ -12,6 +12,7 @@ import { AppButton } from '../../components/ui/AppButton';
 import { TimeSlotPicker } from '../../components/booking/TimeSlotPicker';
 import { LoadingSpinner } from '../../components/ui/LoadingSpinner';
 import { providerApi } from '../../services/providerApi';
+import { bookingApi } from '../../services/bookingApi';
 import { TimeSlot, generateTimeSlots } from '../../utils/dateTime';
 import { theme } from '../../config/theme';
 import { CustomerStackParamList } from '../../navigation/types';
@@ -35,10 +36,45 @@ export const BookingSelectTimeScreen: React.FC = () => {
   const loadTimeSlots = async () => {
     try {
       setIsLoading(true);
-      // TODO: Get actual available slots from API
-      // const slots = await providerApi.getAvailableTimeSlots(providerId, date);
-      // For now, generate mock slots
-      const slots = generateTimeSlots(9, 18, 30, []);
+      // Get actual available slots from API (with fallback to generated slots)
+      let slots: TimeSlot[];
+      try {
+        slots = await providerApi.getAvailableTimeSlots(providerId, date);
+        // If API returns empty, generate slots as fallback
+        if (slots.length === 0) {
+          const availability = await providerApi.getProviderAvailability(providerId);
+          const dateObj = new Date(date);
+          const dayOfWeek = dateObj.getDay();
+          const workingDay = availability.workingDays.find(wd => wd.dayOfWeek === dayOfWeek);
+          
+          if (workingDay && workingDay.isAvailable) {
+            const [startHour] = workingDay.startTime.split(':').map(Number);
+            const [endHour] = workingDay.endTime.split(':').map(Number);
+            // Get booked slots to filter out
+            const bookings = await bookingApi.getMyBookings();
+            const bookedSlots = bookings
+              .filter(b => b.date === date && b.status !== 'CANCELLED')
+              .map(b => b.startTime);
+            slots = generateTimeSlots(startHour, endHour, 30, bookedSlots);
+          } else {
+            slots = [];
+          }
+        }
+      } catch (error) {
+        // Fallback: generate slots
+        const availability = await providerApi.getProviderAvailability(providerId);
+        const dateObj = new Date(date);
+        const dayOfWeek = dateObj.getDay();
+        const workingDay = availability.workingDays.find(wd => wd.dayOfWeek === dayOfWeek);
+        
+        if (workingDay && workingDay.isAvailable) {
+          const [startHour] = workingDay.startTime.split(':').map(Number);
+          const [endHour] = workingDay.endTime.split(':').map(Number);
+          slots = generateTimeSlots(startHour, endHour, 30, []);
+        } else {
+          slots = [];
+        }
+      }
       setTimeSlots(slots);
     } catch (error) {
       console.error('Error loading time slots:', error);

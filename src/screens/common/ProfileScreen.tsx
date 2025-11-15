@@ -11,6 +11,7 @@ import { ScreenContainer } from '../../components/layout/ScreenContainer';
 import { AppButton } from '../../components/ui/AppButton';
 import { AppTextInput } from '../../components/ui/AppTextInput';
 import { AppAvatar } from '../../components/ui/AppAvatar';
+import { ImagePickerButton } from '../../components/ui/ImagePickerButton';
 import { useAuth } from '../../context/AuthContext';
 import { useUser } from '../../context/UserContext';
 import { theme } from '../../config/theme';
@@ -61,7 +62,16 @@ export const ProfileScreen: React.FC = () => {
     <ScreenContainer scrollable>
       <ScrollView style={styles.container}>
         <View style={styles.avatarContainer}>
-          <AppAvatar name={user?.name} size={80} />
+          <AppAvatar name={user?.name} uri={user?.avatarUrl} size={80} />
+          <ImagePickerButton
+            currentImageUri={user?.avatarUrl}
+            onImageSelected={async (uri) => {
+              await updateProfile({ avatarUrl: uri });
+            }}
+            label="Change Avatar"
+            size={80}
+            circular
+          />
           <Text style={styles.name}>{user?.name}</Text>
           <Text style={styles.email}>{user?.email}</Text>
           <Text style={styles.role}>{user?.role}</Text>
@@ -105,6 +115,14 @@ export const ProfileScreen: React.FC = () => {
             loading={isLoading}
             fullWidth
             style={styles.button}
+          />
+
+          <AppButton
+            title="Settings"
+            onPress={() => navigation.navigate('Settings' as any)}
+            variant="outline"
+            fullWidth
+            style={styles.settingsButton}
           />
 
           <AppButton
@@ -152,8 +170,11 @@ const styles = StyleSheet.create({
   button: {
     marginTop: theme.spacing.md,
   },
-  logoutButton: {
+  settingsButton: {
     marginTop: theme.spacing.lg,
+  },
+  logoutButton: {
+    marginTop: theme.spacing.md,
     borderColor: theme.colors.error,
   },
 });

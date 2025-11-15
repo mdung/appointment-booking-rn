@@ -14,6 +14,7 @@ import { ScreenContainer } from '../../components/layout/ScreenContainer';
 import { AppButton } from '../../components/ui/AppButton';
 import { AppTextInput } from '../../components/ui/AppTextInput';
 import { LoadingSpinner } from '../../components/ui/LoadingSpinner';
+import { ImagePickerButton } from '../../components/ui/ImagePickerButton';
 import { useAuth } from '../../context/AuthContext';
 import { providerApi } from '../../services/providerApi';
 import { Provider } from '../../models/Provider';
@@ -42,6 +43,7 @@ export const ProviderProfileEditScreen: React.FC = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [existingProvider, setExistingProvider] = useState<Provider | null>(null);
+  const [photos, setPhotos] = useState<string[]>([]);
 
   const { control, handleSubmit, formState: { errors }, reset } = useForm({
     resolver: yupResolver(providerSchema),
@@ -70,6 +72,7 @@ export const ProviderProfileEditScreen: React.FC = () => {
       const provider = await providerApi.getMyProviderProfile();
       if (provider) {
         setExistingProvider(provider);
+        setPhotos(provider.photos || []);
         reset({
           name: provider.name,
           description: provider.description,
@@ -108,6 +111,7 @@ export const ProviderProfileEditScreen: React.FC = () => {
           min: parseFloat(data.minPrice),
           max: parseFloat(data.maxPrice),
         },
+        photos,
       };
 
       if (existingProvider) {
@@ -138,6 +142,25 @@ export const ProviderProfileEditScreen: React.FC = () => {
         <Text style={styles.title}>
           {existingProvider ? 'Edit Provider Profile' : 'Create Provider Profile'}
         </Text>
+
+        <View style={styles.photosSection}>
+          <Text style={styles.sectionLabel}>Photos</Text>
+          <ImagePickerButton
+            currentImageUri={photos[0]}
+            onImageSelected={(uri) => setPhotos([uri, ...photos.slice(1)])}
+            label="Add Photo"
+            size={120}
+          />
+          {photos.length > 0 && (
+            <AppButton
+              title="Remove Photo"
+              onPress={() => setPhotos(photos.slice(1))}
+              variant="outline"
+              size="small"
+              style={styles.removeButton}
+            />
+          )}
+        </View>
 
         <Controller
           control={control}
@@ -334,6 +357,18 @@ const styles = StyleSheet.create({
   button: {
     marginTop: theme.spacing.md,
     marginBottom: theme.spacing.xl,
+  },
+  photosSection: {
+    marginBottom: theme.spacing.lg,
+  },
+  sectionLabel: {
+    fontSize: theme.typography.body,
+    fontWeight: '600',
+    color: theme.colors.text,
+    marginBottom: theme.spacing.sm,
+  },
+  removeButton: {
+    marginTop: theme.spacing.sm,
   },
 });
 

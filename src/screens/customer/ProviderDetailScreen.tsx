@@ -19,6 +19,7 @@ import { Review } from '../../models/Review';
 import { formatDate } from '../../utils/dateTime';
 import { theme } from '../../config/theme';
 import { CustomerStackParamList } from '../../navigation/types';
+import { Image } from 'react-native';
 
 type ProviderDetailScreenRouteProp = RouteProp<CustomerStackParamList, 'ProviderDetail'>;
 type ProviderDetailScreenNavigationProp = StackNavigationProp<CustomerStackParamList, 'ProviderDetail'>;
@@ -96,6 +97,13 @@ export const ProviderDetailScreen: React.FC = () => {
   return (
     <ScreenContainer scrollable>
       <ScrollView style={styles.container}>
+        {provider.photos && provider.photos.length > 0 && (
+          <Image
+            source={{ uri: provider.photos[0] }}
+            style={styles.heroImage}
+            resizeMode="cover"
+          />
+        )}
         <View style={styles.header}>
           <Text style={styles.providerName}>{provider.name}</Text>
           <View style={styles.ratingContainer}>
@@ -165,6 +173,11 @@ export const ProviderDetailScreen: React.FC = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+  },
+  heroImage: {
+    width: '100%',
+    height: 200,
+    marginBottom: theme.spacing.md,
   },
   header: {
     marginBottom: theme.spacing.lg,

@@ -20,7 +20,10 @@ export default function App() {
       <AuthProvider>
         <UserProvider>
           <BookingProvider>
-            <NavigationContainer>
+            <NavigationContainer
+              ref={setNavigationRef}
+              linking={linking}
+            >
               <StatusBar style="auto" />
               <AppNavigator />
               <Toast />

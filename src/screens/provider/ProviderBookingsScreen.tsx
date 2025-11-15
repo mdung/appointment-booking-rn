@@ -69,21 +69,29 @@ export const ProviderBookingsScreen: React.FC = () => {
     </AppCard>
   );
 
-  if (isLoading) {
-    return <LoadingSpinner fullScreen />;
-  }
-
   return (
     <ScreenContainer>
-      <FlatList
-        data={bookings}
-        renderItem={renderBooking}
-        keyExtractor={(item) => item.id}
-        contentContainerStyle={styles.list}
-        showsVerticalScrollIndicator={false}
-        refreshing={isLoading}
-        onRefresh={loadBookings}
-      />
+      {isLoading ? (
+        <SkeletonLoader type="list" count={5} />
+      ) : (
+        <FlatList
+          data={bookings}
+          renderItem={renderBooking}
+          keyExtractor={(item) => item.id}
+          contentContainerStyle={styles.list}
+          showsVerticalScrollIndicator={false}
+          refreshControl={
+            <RefreshControl refreshing={isRefreshing} onRefresh={onRefresh} />
+          }
+          ListEmptyComponent={
+            <EmptyState
+              title="No Bookings"
+              message="You don't have any bookings yet"
+              icon="📅"
+            />
+          }
+        />
+      )}
     </ScreenContainer>
   );
 };

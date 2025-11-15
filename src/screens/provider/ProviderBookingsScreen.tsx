@@ -3,14 +3,16 @@
  * Shows all bookings for the provider
  */
 
-import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, FlatList } from 'react-native';
+import React, { useState, useEffect, useCallback } from 'react';
+import { View, Text, StyleSheet, FlatList, RefreshControl } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { StackNavigationProp } from '@react-navigation/stack';
 import { ScreenContainer } from '../../components/layout/ScreenContainer';
 import { AppCard } from '../../components/ui/AppCard';
 import { BookingStatusTag } from '../../components/booking/BookingStatusTag';
 import { LoadingSpinner } from '../../components/ui/LoadingSpinner';
+import { EmptyState } from '../../components/ui/EmptyState';
+import { SkeletonLoader } from '../../components/ui/SkeletonLoader';
 import { bookingApi } from '../../services/bookingApi';
 import { Booking } from '../../models/Booking';
 import { formatDate, formatTime } from '../../utils/dateTime';
@@ -23,9 +25,16 @@ export const ProviderBookingsScreen: React.FC = () => {
   const navigation = useNavigation<ProviderBookingsScreenNavigationProp>();
   const [bookings, setBookings] = useState<Booking[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [isRefreshing, setIsRefreshing] = useState(false);
 
   useEffect(() => {
     loadBookings();
+  }, []);
+
+  const onRefresh = useCallback(async () => {
+    setIsRefreshing(true);
+    await loadBookings();
+    setIsRefreshing(false);
   }, []);
 
   const loadBookings = async () => {

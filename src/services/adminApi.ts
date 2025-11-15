@@ -26,6 +26,7 @@ export const adminApi = {
               name: 'John Doe',
               email: 'john@example.com',
               role: 'CUSTOMER',
+              isActive: true,
               createdAt: new Date().toISOString(),
               updatedAt: new Date().toISOString(),
             },
@@ -60,6 +61,19 @@ export const adminApi = {
       // Fallback to mock data for development
       const user = await adminApi.getUserById(id);
       return { ...user, ...data, updatedAt: new Date().toISOString() };
+    }
+  },
+
+  /**
+   * Update user status (isActive)
+   */
+  updateUserStatus: async (userId: string, data: { isActive: boolean }): Promise<User> => {
+    try {
+      return await apiClient.patch<User>(`/admin/users/${userId}/status`, data);
+    } catch (error) {
+      // Fallback to mock
+      const user = await adminApi.getUserById(userId);
+      return { ...user, isActive: data.isActive, updatedAt: new Date().toISOString() };
     }
   },
 

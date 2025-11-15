@@ -107,9 +107,6 @@ export const ProviderListScreen: React.FC<ProviderListScreenProps> = ({ category
     </AppCard>
   );
 
-  if (isLoading) {
-    return <LoadingSpinner fullScreen />;
-  }
 
   return (
     <ScreenContainer>
@@ -122,18 +119,24 @@ export const ProviderListScreen: React.FC<ProviderListScreenProps> = ({ category
         />
         <ProviderFilters filters={filters} onFiltersChange={setFilters} />
       </View>
-      <FlatList
-        data={providers}
-        renderItem={renderProvider}
-        keyExtractor={(item) => item.id}
-        contentContainerStyle={styles.list}
-        showsVerticalScrollIndicator={false}
-        ListEmptyComponent={
-          <View style={styles.emptyContainer}>
-            <Text style={styles.emptyText}>No providers found</Text>
-          </View>
-        }
-      />
+      {isLoading ? (
+        <SkeletonLoader type="list" count={5} />
+      ) : (
+        <FlatList
+          data={providers}
+          renderItem={renderProvider}
+          keyExtractor={(item) => item.id}
+          contentContainerStyle={styles.list}
+          showsVerticalScrollIndicator={false}
+          ListEmptyComponent={
+            <EmptyState
+              title="No Providers Found"
+              message={searchQuery || filters ? "No providers match your search or filters" : "No providers available"}
+              icon="🏢"
+            />
+          }
+        />
+      )}
     </ScreenContainer>
   );
 };

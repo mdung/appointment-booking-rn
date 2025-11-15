@@ -3,22 +3,59 @@
  * List and manage providers
  */
 
-import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, FlatList, Switch, Alert } from 'react-native';
+import React, { useState, useEffect, useCallback } from 'react';
+import { View, Text, StyleSheet, FlatList, Switch, Alert, RefreshControl } from 'react-native';
 import { ScreenContainer } from '../../components/layout/ScreenContainer';
 import { AppCard } from '../../components/ui/AppCard';
 import { LoadingSpinner } from '../../components/ui/LoadingSpinner';
+import { EmptyState } from '../../components/ui/EmptyState';
+import { SkeletonLoader } from '../../components/ui/SkeletonLoader';
+import { AdminSearchBar } from '../../components/admin/AdminSearchBar';
 import { adminApi } from '../../services/adminApi';
 import { Provider } from '../../models/Provider';
 import { theme } from '../../config/theme';
 
 export const AdminProvidersScreen: React.FC = () => {
   const [providers, setProviders] = useState<Provider[]>([]);
+  const [filteredProviders, setFilteredProviders] = useState<Provider[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [isRefreshing, setIsRefreshing] = useState(false);
+  const [searchQuery, setSearchQuery] = useState('');
 
   useEffect(() => {
     loadProviders();
   }, []);
+
+  useEffect(() => {
+    filterProviders();
+  }, [providers, searchQuery]);
+
+  const filterProviders = () => {
+    if (!searchQuery.trim()) {
+      setFilteredProviders(providers);
+      return;
+    }
+
+    const query = searchQuery.toLowerCase();
+    const filtered = providers.filter(
+      (provider) =>
+        provider.name.toLowerCase().includes(query) ||
+        provider.type.toLowerCase().includes(query) ||
+        provider.address.toLowerCase().includes(query) ||
+        provider.email?.toLowerCase().includes(query)
+    );
+    setFilteredProviders(filtered);
+  };
+
+  const onRefresh = useCallback(async () => {
+    setIsRefreshing(true);
+    await loadProviders();
+    setIsRefreshing(false);
+  }, []);
+
+  const handleSearch = (query: string) => {
+    setSearchQuery(query);
+  };
 
   const loadProviders = async () => {
     try {
@@ -57,26 +94,52 @@ export const AdminProvidersScreen: React.FC = () => {
     </AppCard>
   );
 
-  if (isLoading) {
-    return <LoadingSpinner fullScreen />;
-  }
-
   return (
     <ScreenContainer>
-      <FlatList
-        data={providers}
-        renderItem={renderProvider}
-        keyExtractor={(item) => item.id}
-        contentContainerStyle={styles.list}
-        showsVerticalScrollIndicator={false}
-        refreshing={isLoading}
-        onRefresh={loadProviders}
-      />
+      <View style={styles.container}>
+        <Text style={styles.title}>Providers</Text>
+        
+        <AdminSearchBar
+          onSearch={handleSearch}
+          placeholder="Search providers by name, type, or location..."
+        />
+
+        {isLoading ? (
+          <SkeletonLoader type="list" count={5} />
+        ) : (
+          <FlatList
+            data={filteredProviders}
+            renderItem={renderProvider}
+            keyExtractor={(item) => item.id}
+            contentContainerStyle={styles.list}
+            showsVerticalScrollIndicator={false}
+            refreshControl={
+              <RefreshControl refreshing={isRefreshing} onRefresh={onRefresh} />
+            }
+            ListEmptyComponent={
+              <EmptyState
+                title="No Providers Found"
+                message={searchQuery ? "No providers match your search" : "No providers in the system"}
+                icon="🏢"
+              />
+            }
+          />
+        )}
+      </View>
     </ScreenContainer>
   );
 };
 
 const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+  },
+  title: {
+    fontSize: theme.typography.h2,
+    fontWeight: '700',
+    color: theme.colors.text,
+    marginBottom: theme.spacing.lg,
+  },
   list: {
     paddingVertical: theme.spacing.sm,
   },
